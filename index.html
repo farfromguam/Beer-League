@@ -188,7 +188,8 @@
 					type: "POST",
 					dataType: "json",
 					data: game,
-					success: function (data, game) {
+					success: function (data) {
+						alert("Page will refresh soon")
 						assignWLs (data);	
 						loop_count++;	
 						if (loop_count == schedule) {
@@ -196,7 +197,8 @@
 								url: "/backliftapp/results",
 								type: "GET",
 								dataType: "json",
-								success: function (data, game) {
+								success: function (data) {
+									alert("Page should refresh")
 									pageRefresh();
 								}
 							});
@@ -204,15 +206,16 @@
 					}			 
 				});											 
 			}); 
-
-			function resultsPush (game) {
-				if (results_array.length === 0) {
-					results_array.push('[' + game +']');
-				}
-				else {
-					results_array.push(game);
-				}
-			};	
+ 
+ //don't think this function is being used
+			// function resultsPush (game) {
+			// 	if (results_array.length === 0) {
+			// 		results_array.push('[' + game +']');
+			// 	}
+			// 	else {
+			// 		results_array.push(game);
+			// 	}
+			// };	
 		}); 
 
 		$('.score_inputs').each(function(){
@@ -329,11 +332,15 @@
 		//                 ** PAGE REFRESH FUNCTIONS **
 		//===========================================================
 
-		function pageRefresh () {
+		function pageRefresh() {
+
+
+
 			$.ajax({
 				type: 'GET',
 				url: '/backliftapp/results',
 				success: function (data) {
+					results_array.push(data); //amcf added 
 					$.ajax({
 						type: 'GET', 
 						url: '/backliftapp/team', 
@@ -342,7 +349,7 @@
 							$('#standings').html('');
 							printTeam(data); // populates table on load
 							enterScoresPop(); //populates enter scores modal
-							//scheduleWrite(); //populates scoreboard/schedule -- NOT WORKING PROPERLY
+							scheduleWrite(); //populates scoreboard/schedule -- NOT WORKING PROPERLY
 							buttonColor(); //changes start season button color based on league size
 							weekPop(); //populates weeks menu
 							sortTable(); // loads and triggers tablesorter on an empty table
