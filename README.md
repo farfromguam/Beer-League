@@ -1,8 +1,9 @@
-
 ##We are refactoring!!!
 
 - this is a fork for NSS
 - work done by Amanda McCadams
+- and
+- Christopher Fryman
 
 
 
