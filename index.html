@@ -6,14 +6,13 @@
 	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<script src="jquery-1.9.1.min.js"></script>
-	<script src="bootstrap.js"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 	<script src="jquery.validate.js"></script>
 	<script src="jquery.tablesorter.min.js"></script> 
 	<script src="schedule.js"></script>
 	<script>
 	$(document).ready(function(){
 		var league_array = [];
-		var win_per;
 		var results_array = [];
 		var sched;
 		var clicker = 0;
@@ -189,7 +188,6 @@
 					dataType: "json",
 					data: game,
 					success: function (data) {
-						alert("Page will refresh soon")
 						assignWLs (data);	
 						loop_count++;	
 						if (loop_count == schedule) {
@@ -197,9 +195,8 @@
 								url: "/backliftapp/results",
 								type: "GET",
 								dataType: "json",
-								success: function (data) {
-									alert("Page should refresh")
-									pageRefresh();
+								success: function (data) {			
+									location.reload();
 								}
 							});
 						}		
@@ -303,7 +300,7 @@
 			});   //end print standings/schedule call  
 
 			function initializePage() { //functions that require both league_array and results_array to be populated
-				scheduleWrite(); //populates scoreboard/schedule
+				scheduleWrite(); //populates scoreboard/schedule  
 				buttonColor(); //changes start season button color based on league size
 				weekPop(); //populates weeks menu in enter scores modal
 			}
@@ -329,48 +326,19 @@
 		//===========================================================
 
 		//===========================================================
-		//                 ** PAGE REFRESH FUNCTIONS **
-		//===========================================================
-
-		function pageRefresh() {
-
-
-
-			$.ajax({
-				type: 'GET',
-				url: '/backliftapp/results',
-				success: function (data) {
-					results_array.push(data); //amcf added 
-					$.ajax({
-						type: 'GET', 
-						url: '/backliftapp/team', 
-						success: function (data) { 
-							league_array.push(data);
-							$('#standings').html('');
-							printTeam(data); // populates table on load
-							enterScoresPop(); //populates enter scores modal
-							scheduleWrite(); //populates scoreboard/schedule -- NOT WORKING PROPERLY
-							buttonColor(); //changes start season button color based on league size
-							weekPop(); //populates weeks menu
-							sortTable(); // loads and triggers tablesorter on an empty table
-						}
-					});   		
-				}
-			});
-		};
-
-		//===========================================================
-		//             ** END PAGE REFRESH FUNCTIONS **
-		//===========================================================
-
-		//===========================================================
 		//              ** STANDINGS TABLE FUNCTIONS **
 		//===========================================================
 
-		function calcPer(data, index){  //calculates and formats win %
-				var raw_per, per_toArray;
-	    		raw_per = 0;
-	    		per_toArray = 0;
+
+		function printTeam(data){ 	//populates table on page load or refresh. Contains popover. 
+			for (var index = 0; index < data.length; index++) { 
+					
+				//this chunk calculates perventage for each record - added by amcf
+				var raw_per =0;
+				var per_toArray =0;
+				var win_per =0;
+
+	    		
 	    		//calculates win percentage to 3 decimal places
 	    		raw_per = (+data[index].wins/(+data[index].wins + +data[index].losses)).toFixed(3); 
 	    		if (raw_per < 1) { //if number is less than 1, omit the pre-decimal 0 when displayed.
@@ -383,11 +351,9 @@
 	    		else { //if number is 1, display full number.
 	    			win_per = "1.000";
 	    		};  		
-		}; // end calcPer func
 
-		function printTeam(data){ 	//populates table on page load or refresh. Contains popover. 
-			for (var index = 0; index < data.length; index++) { 
-				calcPer(data, index);
+
+
 				$('<tr><td><a rel="popover" data-toggle="popover" title="<h4 style=\'text-align: center;\'>' + data[index].teamName +'</h4>"  data-content="<table id=\'contact_pop\'><tr><td>Manager: </td><td>' + data[index].firstName + " " + data[index].lastName + '</td></tr><tr><td>Phone:</td><td>' + data[index].phoneNumber + '</td></tr><tr><td>Sponsor:</td><td>' + data[index].sponsor + '</td></tr><tr><td>Zip:</td><td>' + data[index].zip +'</td></tr></table>">' + data[index].teamName + '</a><button type="button" class="close nix" style="margin-right: 10px; color: red; opacity: 1;" data-id="' + data[index].id + '" data-index="' + index + '">&times;</button></td><td>' + data[index].wins + '</td><td>' + data[index].losses + '</td><td>' + win_per + '</td></tr>').appendTo('#standings');
 					};
 		}; //end printTeam func
