@@ -12,13 +12,16 @@
 	<script src="schedule.js"></script>
 	<script>
 	$(document).ready(function(){
-		var league_array = [];
-		var results_array = [];
-		var sched;
-		var clicker = 0;
 		
-		$('.alert').hide();		//hide team limit alert upon load
+		// Local copy of data from Database to keep page load times down
+			var league_array = [];
+			var results_array = [];
+			var sched;
+		
+		//hide team limit alert upon load
+		$('.alert').hide();
 
+		// Function to make table sort dynamic
 		$('#mytable').tablesorter(); 
 
 		//===========================================================
@@ -455,6 +458,7 @@
 		//                ** SCHEDULE FUNCTIONS **
 		//===========================================================
 
+
 		function scheduleCall() {  				//dynamically refreshes schedule table
 			$('#schedule_table').html(''); 
 			$.ajax({type: 'GET', url: '/backliftapp/team', 
@@ -462,8 +466,8 @@
 					scheduleWrite(data);
 				}
 			});  
-			clicker = 0;
-		}; //end scheduleCall
+			// clicker = 0;
+		};
 
 		//adds slide toggle to schedule table
 		$('#schedule_table').on('click', '.slide_head', function() {
@@ -494,6 +498,7 @@
 				writeSchedEven(sched);
 			}; // end even/odd selector
 		}; //end scheduleWrite func
+
 		
 		function writeSchedEven(sched) { 		//writes schedule table head/calls write functions for even-# leagues (4,6,8 teams)
 
@@ -534,26 +539,25 @@
 		}; //end prepTable func
 
 		function prepSched(i, j, n) { 			//appends schedule info into prepped table for schedWrite function
-
-			var score_grab1, score_grab2;		
-			if (clicker >= results_array[0].length) {	//if a weeks games haven't been played, append TBA
+			
+				// default score place holder
 				score_grab1 = 'TBA';
 				score_grab2 = 'TBA';
-			}
-
-			else {										//if they have, append scores
+			
+			 //if they have scores, append them to score_grab1,2
 				$.each(results_array[0], function(index){
 					if ((league_array[0][sched[i][j][0] - n].id + league_array[0][sched[i][j][1] - n].id) == results_array[0][index].gameId) {
 						score_grab1 = results_array[0][index].score1;
 						score_grab2 = results_array[0][index].score2;
 					}
 				});
-			}
+			
 			$('<tr style="background-color: #e6EEEE;"><td colspan="2">' + league_array[0][sched[i][j][0] - n].teamName + " vs. " + league_array[0][sched[i][j][1] - n].teamName + "</td></tr>").appendTo('#schedule_body' + i);
 			$('<tr><td>' + league_array[0][sched[i][j][0] - n].teamName + '</td><td>' + score_grab1 + '</td></tr>').appendTo('#schedule_body' + i);
 			$('<tr><td>' + league_array[0][sched[i][j][1] - n].teamName + '</td><td>' + score_grab2 + '</td></tr>').appendTo('#schedule_body' + i);
-			clicker++;
+
 		}; //end prepSched func
+
 
 		//===========================================================
 		//                ** END SCHEDULE FUNCTIONS **
@@ -787,6 +791,8 @@
 		// 		}
 		// 	};
 		// };
+
+
 
 	}); //end doc ready
 
