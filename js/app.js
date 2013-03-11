@@ -102,6 +102,7 @@ $(document).ready(function () {
     //===========================================================
 
     $('#createTeam').click(function () {
+        if ($("#modal_form").valid() == true) {
         //if team deleted from middle of field, id's stop corresponding to league_array.length. fix!
         var team = {
             //id: idWrite(), IGNORE -- NONFUNCTIONAL CODE
@@ -132,7 +133,10 @@ $(document).ready(function () {
         $('#create_team').modal('hide'); //hide modal on submit
         clearForm(); //clear form inputs	
         validateClear(); //clears validate status on form submit
-        sortTable(); //loads sort table on empty table   				    
+        sortTable(); //loads sort table on empty table
+        } else {
+            $.preventDefault();
+        }   				    
     }); //end submit click function	
 
     //===========================================================
@@ -204,7 +208,12 @@ $(document).ready(function () {
     //===========================================================
     //            ** FORM CLEAR/TABLE SORT FUNCTIONS **
     //===========================================================
-
+    
+    $("#buttonCancel").click(function(){
+        clearForm();
+        validateClear();
+    });
+    
     function clearForm() { //clears form fields on close
         $('.team_inputs').each(function () {
             $(this).val('');
@@ -242,7 +251,7 @@ $(document).ready(function () {
         if (league_array[0].length >= 4) {
             var answer = confirm("Are you sure you want to start the season? There's no turning back!")
             if (answer) {
-                alert("Play ball!");
+                // alert("Play ball!");
                 $.ajax({
                     url: "/backliftapp/start",
                     type: "POST",
@@ -401,7 +410,6 @@ $(document).ready(function () {
     function weekPop() { //populates weeks selector in enter scores modal
         $('#week_selector').html('');
         $('#week_selector').prepend('<option>Select:</option>');
-
         if (results_array[0].length === 0) {
             $.each(sched, function (index) {
                 var dynIndex = index + 1;
@@ -456,7 +464,7 @@ $(document).ready(function () {
     function prepScores(n, index, gameList, count) { //appends game lists for enter scores modal based on week selected
         $('<div id="game_group' + index + '" class="game_wraps"></div>').appendTo('#game_scores');
         $('<h4 style="text-align: center;">' + league_array[0][gameList[index][0] - n].teamName + ' vs. ' + league_array[0][gameList[index][1] - n].teamName + '</h4>').appendTo('#game_group' + index);
-        $('<div class="control-group"><label class="control-label score_labels" for="sponsor">' + league_array[0][gameList[index][0] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_' + count + '" name="team_one_score" placeholder="Score"><input id="id_' + count + '" class="score_inputs" value="' + league_array[0][gameList[index][0] - n].id + '" style="display: none;"></div></div>').appendTo('#game_group' + index);
+        $('<div class="control-group"><label class="control-label score_labels" for="sponsor">' + league_array[0][gameList[index][0] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_' + count + '" name="team_one_score" placeholder="DOIT"><input id="id_' + count + '" class="score_inputs" value="' + league_array[0][gameList[index][0] - n].id + '" style="display: none;"></div></div>').appendTo('#game_group' + index);
         $('<div class="control-group" style="margin-top: -10px;"><label class="control-label score_labels" for="team_two_score">' + league_array[0][gameList[index][1] - n].teamName + '</label><div class="controls"><input type="text" class="score_inputs" id="team_' + (count + 1) + '" name="team_two_score" placeholder="Score"><input id="id_' + (count + 1) + '" class="score_inputs" value="' + league_array[0][gameList[index][1] - n].id + '" style="display: none;"></div></div>').appendTo('#game_group' + index);
     }; //end prepScores func
 
