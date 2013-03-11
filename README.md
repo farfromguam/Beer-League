@@ -5,13 +5,13 @@
 - and
 - Christopher Fryman
 
-Refactoring work done
+####Refactoring work done
 -"clicker" and "win per" no longer global functions, removed global functions ("league array" "results array" and "sched" are local copies of server data)
 -scores automatically updating properly (the biggest thing we did)
 -separated js and html page and reorganized js file in a logical manner
 -form validation prevents team creation if incomplete
 
--not addressed:
+####Not addressed:
 -deleting a team from middle of array
 -score validation and ties
 
